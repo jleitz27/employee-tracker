@@ -158,25 +158,19 @@ const addRole = () => {
 
 //update employee
 const updateRole = () => {
-  console.log("I am the best");
-  connection.query('SELECT role.id, role.title, CONCAT(employee.first_name," ", employee.last_name) AS employee, employee.id AS employee_id, CONCAT(employee2.first_name, " ", employee2.last_name) AS manager, employee.manager_id FROM role LEFT JOIN employee on employee.role_id = role.id LEFT JOIN employee AS employee2 ON employee.manager_id = employee2.id;', async (err,res) => {
+ 
+  connection.promise().query(`SELECT * FROM employee`,  (err,data) => {
       if (err) throw err;
       
-      const data = await inquirer.prompt(
+      const employees = data.map(({ id, first_name, last_name }) => ({ name: first_name + " "+ last_name, value: id }));
+      inquirer.prompt(
           [
               {
                   type: 'list',
-                  name: 'empChoice',
+                  name: 'name',
                   message: 'Whose role would you like to update',
-                  choices: () => {
-                      const employees = [];
-                      res.filter(emp => {
-                          if (typeof emp.employee === 'string'){ 
-                              employees.push(emp.employee);
-                          }
-                      });
-                      return employees;
-                  }
+                  choices: employees
+                  
               }
             ])
               .then(empChoice => {
