@@ -9,7 +9,7 @@
   - [Installation](#installation)
   - [License](#license)
   - [GitHub Repo](#github-repo)
-  - [Link to deployed project](#link-to-deployed-project)
+  - [Link to video of working app](#link-to-video-of-working-app)
   - [Questions](#questions)
 
 ## User Story
@@ -41,7 +41,7 @@
     -Clone the repo
     -Install node.js: https://coding-boot-camp.github.io/full-stack/nodejs/how-to-install-nodejs
     -Then in the integrated terminal for the cloned repo terminal:
-      -node index.js
+      -npm start
 
 
 
@@ -55,7 +55,7 @@
   ## GitHub Repo
   https://github.com/jleitz27/employee-tracker
 
-  ## Link to deployed project
+  ## Link to video of working app
   https://whispering-refuge-76567.herokuapp.com/ 
 
 <p align="center">

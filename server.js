@@ -2,7 +2,11 @@ const mysql = require('mysql2');
 
 const inquirer = require('inquirer'); 
 
+// const connection = require('./lib/connection');
+
 require('dotenv').config();
+
+// const { viewDepartment, addDept } = require('./lib/department');
 
 // const { viewDepartment, addDept } = require('./lib/department');
 
@@ -10,7 +14,7 @@ require('dotenv').config();
 
 // const { viewRoles, addRole, updateRole } = require('./lib/employee');
 
-// const connection = require('./lib/connection');
+
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -22,6 +26,9 @@ const connection = mysql.createConnection({
 
 connection.connect(err => {
     if (err) throw err;
+    console.log('********************************');
+    console.log('Welcome to the Employee Tracker!');
+    console.log('********************************')
     console.log('connected as id ' + connection.threadId);
     promptUser();
 });
@@ -170,86 +177,51 @@ const updateRole = () => {
                       });
                       return employees;
                   }
-              },
-              {
-                  type: 'list',
-                  name: 'roleChoice',
-                  message: 'What is their new role?',
-                  choices: () => {
-                      let result = res.map(role => role.title);
-                      let noMultiples = [...new Set(result)];
-                      return noMultiples;
-                  }
-              },
-              {
-                  type: 'confirm',
-                  name: 'updateMGR',
-                  message: 'Would you like to change or remove their manager?'
-              },
-              {
-                  type: 'list',
-                  name: 'mgrChoice',
-                  message: 'Please choose their manager',
-                  when: answers => answers.updateMGR,
-                  choices: () => {
-                      let managers = ['Remove Manager'];
-                      res.filter(role => {
-                          if (typeof role.manager === 'string') {
-                              managers.push(role.manager)
-                          }
-                      });
-                      managers = [...new Set(managers)]
-                      return managers;
-                  }
               }
-          ]
-      );
-      //Filter role for role id
-      let roleID;
-      res.filter(role => {
-          if (role.title === data.roleChoice) {
-              roleID = role.id;
-          }
-      });
-      //Filter employee name for employee id
-      let empID;
-      res.filter(emp => {
-          if (emp.employee === data.empChoice) {
-              empID = emp.employee_id;
-          }
-      });
-      //Filter mgr name for mgr id
-      let mgrID;
-      res.filter(mgr => {
-          if (mgr.manager === data.mgrChoice) {
-              mgrID = mgr.manager_id;
-          }
-      });
-      // Update the employees role in the DB
-      await connection.query('UPDATE employee SET ? WHERE ?', 
-      [
-          {
-              role_id: roleID,
-              manager_id: mgrID
-          },
-          {
-              id: empID
-          }
-      ],
-      (err, res) => {
-          if (err) throw err;
-          //If mgr removed 
-          else if (data.mgrChoice === 'Remove Manager') {
-              connection.query('DELETE FROM employee WHERE ?', { manager_id: mgrID }, (err, res) => {
-                  if (err) throw err;
-                  //Success message
-                  console.log(`\n${data.empChoice}'s role has been updated and their manager removed\n`);
-                  promptUser();
-              });
-          }else{
-              console.log(`\n${data.empChoice}'s role has been updated\n`);
-              promptUser();
-          }
+            ])
+              .then(empChoice => {
+                const employee = empChoice.name;
+                const params = []; 
+                params.push(employee);
+        
+                const roleSql = `SELECT * FROM role`;
+        
+                connection.promise().query(roleSql, (err, data) => {
+                  if (err) throw err; 
+        
+                  const roles = data.map(({ id, title }) => ({ name: title, value: id }));
+                  
+                    inquirer.prompt([
+                      {
+                        type: 'list',
+                        name: 'role',
+                        message: "What is the employee's new role?",
+                        choices: roles
+                      }
+                    ])
+                        .then(roleChoice => {
+                        const role = roleChoice.role;
+                        params.push(role); 
+                        
+                        let employee = params[0]
+                        params[0] = role
+                        params[1] = employee 
+                        
+        
+                        // console.log(params)
+        
+                        const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
+        
+                        connection.query(sql, params, (err, result) => {
+                          if (err) throw err;
+                          console.log(`\n${data.empChoice}'s role has been updated\n`);
+                      
+                        viewEmployees();
+                      });
+                    });
+                  });
+      
+      
       });
   });
 };
