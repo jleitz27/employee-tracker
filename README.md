@@ -56,10 +56,10 @@
   https://github.com/jleitz27/employee-tracker
 
   ## Link to video of working app
-  https://whispering-refuge-76567.herokuapp.com/ 
+  https://www.screencast.com/t/Rhe5gm27Ol7t
 
 <p align="center">
-  <img src="./lib/images/site.gif" width="350"
+  <img src="./lib/images/screenshot.png" width="350"
 
 </p>
   
