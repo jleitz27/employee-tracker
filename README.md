@@ -56,7 +56,7 @@
   https://github.com/jleitz27/employee-tracker
 
   ## Link to video of working app
-  https://www.screencast.com/t/Rhe5gm27Ol7t
+ https://www.screencast.com/t/5gnnbeWhk 
 
 <p align="center">
   <img src="./lib/images/screenshot.png" width="350"
